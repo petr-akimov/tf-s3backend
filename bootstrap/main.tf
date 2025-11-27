@@ -47,12 +47,3 @@ resource "yandex_storage_bucket" "tfstate" {
   folder_id = var.folder_id
 }
 
-resource "yandex_storage_bucket_grant" "tfstate_owner" {
-  bucket = yandex_storage_bucket.tfstate.bucket
-
-  grant {
-    id          = yandex_iam_service_account.tf_sa.id
-    type        = "serviceAccount"
-    permissions = ["FULL_CONTROL"]
-  }
-}
