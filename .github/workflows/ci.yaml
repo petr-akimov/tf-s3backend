@@ -46,6 +46,7 @@ jobs:
 
       - name: Read outputs and set job outputs
         id: set_outputs
+        working-directory: ./bootstrap
         run: |
           ACCESS_KEY_ID=$(jq -r '.static_access_key_id.value' tf_bootstrap_outputs.json)
           ACCESS_KEY_SECRET=$(jq -r '.static_access_key_secret.value' tf_bootstrap_outputs.json)
