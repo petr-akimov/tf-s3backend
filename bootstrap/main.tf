@@ -50,3 +50,16 @@ resource "yandex_storage_bucket_grant" "tfstate_sa_grant" {
     permissions = ["FULL_CONTROL"]
   }
 }
+
+# Добавьте в bootstrap/main.tf
+resource "yandex_resourcemanager_folder_iam_member" "editor" {
+  folder_id = var.folder_id
+  role      = "editor"
+  member    = "serviceAccount:${yandex_iam_service_account.tf_sa.id}"
+}
+
+resource "yandex_resourcemanager_folder_iam_member" "storage_admin" {
+  folder_id = var.folder_id
+  role      = "storage.admin"
+  member    = "serviceAccount:${yandex_iam_service_account.tf_sa.id}"
+}
