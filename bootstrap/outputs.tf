@@ -4,6 +4,7 @@ output "static_access_key_id" {
 
 output "static_access_key_secret" {
   value = yandex_iam_service_account_static_access_key.static_key.secret_key
+  sensitive = true
 }
 
 
