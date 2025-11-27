@@ -41,27 +41,22 @@ jobs:
           TF_VAR_oauth_token: ${{ secrets.YC_OAUTH_TOKEN }}
           TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
           TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
-        run: |
-          terraform apply -auto-approve -input=false
-          # Не используем -json флаг, так как он может создавать проблемы
-          terraform output static_access_key_id > access_key_id.txt
-          terraform output static_access_key_secret > access_key_secret.txt
-          terraform output bucket > bucket.txt
-
+          YC_LOG_LEVEL: "error"  # Добавляем эту строку
+        run: terraform apply -auto-approve -input=false
 
       - name: Read outputs and set job outputs
         id: set_outputs
         working-directory: ./bootstrap
+        env:
+          YC_LOG_LEVEL: "error"  # И здесь тоже
         run: |
-          # Получаем outputs в raw формате и создаем JSON вручную
           ACCESS_KEY_ID=$(terraform output -raw static_access_key_id)
           ACCESS_KEY_SECRET=$(terraform output -raw static_access_key_secret)
           BUCKET=$(terraform output -raw bucket)
     
           echo "access_key_id=$ACCESS_KEY_ID" >> $GITHUB_OUTPUT
           echo "access_key_secret=$ACCESS_KEY_SECRET" >> $GITHUB_OUTPUT
-          echo "bucket=$BUCKET" >> $GITHUB_OUTPUT
-    
+          echo "bucket=$BUCKET" >> $GITHUB_OUTPUT    
 
 
   deploy:
