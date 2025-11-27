@@ -47,17 +47,18 @@ jobs:
       - name: Read outputs and set job outputs
         id: set_outputs
         working-directory: ./bootstrap
-        env:
-          YC_LOG_LEVEL: "error"  # И здесь тоже
         run: |
-          ACCESS_KEY_ID=$(terraform output -raw static_access_key_id)
-          ACCESS_KEY_SECRET=$(terraform output -raw static_access_key_secret)
-          BUCKET=$(terraform output -raw bucket)
+          # Используем terraform show -json для получения чистого JSON состояния
+          terraform show -json > tfstate.json
+    
+          # Извлекаем значения с помощью jq
+          ACCESS_KEY_ID=$(jq -r '.values.outputs.static_access_key_id.value' tfstate.json)
+          ACCESS_KEY_SECRET=$(jq -r '.values.outputs.static_access_key_secret.value' tfstate.json)
+          BUCKET=$(jq -r '.values.outputs.bucket.value' tfstate.json)
     
           echo "access_key_id=$ACCESS_KEY_ID" >> $GITHUB_OUTPUT
           echo "access_key_secret=$ACCESS_KEY_SECRET" >> $GITHUB_OUTPUT
-          echo "bucket=$BUCKET" >> $GITHUB_OUTPUT    
-
+          echo "bucket=$BUCKET" >> $GITHUB_OUTPUT
 
   deploy:
     name: deploy
